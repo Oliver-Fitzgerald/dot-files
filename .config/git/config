@@ -1,0 +1,57 @@
+[user]
+	name = "Oliver Fitzgerald"
+	email = "ofitzgerald15@gmail.com"
+[diff]
+	tool = vimdiff
+[safe]
+	directory = /usr/local/mark
+[core]
+    whitespace = error
+	editor = vim
+
+[init]
+    defaultBranch = main
+
+[url "ssh://git@github.com:Oliver-Fitzgerald/"]
+    insteadof = "of:"
+
+[status]
+    branch = true
+    showStash = true
+
+[diff]
+    context = 3
+    renames = copies
+    innerHunkContext = 10
+
+[pager]
+    diff = diff-so-fancy | $PAGER
+
+[diff-so-fancy]
+    markEmptyLines = false
+
+[color "diff"]
+    meta = black bold
+    frag = magenta
+    context = white
+    whitespace = yellow reverse
+    old = red
+
+[interactive]
+    diffFilter = diff-so-fancy --patch
+    singleKey = true
+
+[push]
+    autoSetupRemote = true
+    default = current
+
+[pull]
+    default = current
+    rebase = true
+
+[rebase]
+    autoStash = true
+    missingCommitsCheck = warn
+
+
+

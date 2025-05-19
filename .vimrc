@@ -1,15 +1,10 @@
-" Plugins ------------------------------------------------------------ {{{
-
-set nocompatible              " be iMproved, required
-filetype off                  " required
-
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
-
-" let Vundle manage Vundle, required
+" Plugins ------------------------------------------------------------ {{{ 
+set nocompatible              
+" be iMproved, required filetype off                  
+" required set the runtime path to include Vundle and initialize 
+set rtp+=~/.vim/bundle/Vundle.vim 
+call vundle#begin() 
+" alternatively, pass a path where Vundle should install plugins call vundle#begin('~/some/path/here') let Vundle manage Vundle, required
 "Plugin 'VundleVim/Vundle.vim'
 
 " The following are examples of different formats supported.
@@ -31,6 +26,45 @@ call vundle#begin()
 
 Plugin 'godlygeek/tabular'
 Plugin 'preservim/vim-markdown' 
+Plugin 'mattn/emmet-vim'
+let g:user_emmet_leader_key='<C-K>'
+Plugin 'alvan/vim-closetag'
+
+" filenames like *.xml, *.html, *.xhtml, ...
+" These are the file extensions where this plugin is enabled.
+let g:closetag_filenames = '*.html,*.xhtml,*.phtml'
+
+" filenames like *.xml, *.xhtml, ...
+" This will make the list of non-closing tags self-closing in the specified files.
+let g:closetag_xhtml_filenames = '*.xhtml,*.jsx'
+
+" filetypes like xml, html, xhtml, ...
+" These are the file types where this plugin is enabled.
+let g:closetag_filetypes = 'html,xhtml,phtml'
+
+" filetypes like xml, xhtml, ...
+" This will make the list of non-closing tags self-closing in the specified files.
+let g:closetag_xhtml_filetypes = 'xhtml,jsx'
+
+" integer value [0|1]
+" This will make the list of non-closing tags case-sensitive (e.g. `<Link>` will be closed while `<link>` won't.)
+let g:closetag_emptyTags_caseSensitive = 1
+
+" dict
+" Disables auto-close if not in a "valid" region (based on filetype)
+let g:closetag_regions = {
+    \ 'typescript.tsx': 'jsxRegion,tsxRegion',
+    \ 'javascript.jsx': 'jsxRegion',
+    \ 'typescriptreact': 'jsxRegion,tsxRegion',
+    \ 'javascriptreact': 'jsxRegion',
+    \ }
+
+" Shortcut for closing tags, default is '>'
+let g:closetag_shortcut = '>'
+
+" Add > at current position without closing the current tag, default is ''
+let g:closetag_close_shortcut = '<leader>>'
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -59,7 +93,7 @@ filetype indent on "Load an indent file for the dected file type
 
 colorscheme slate
 syntax on "Enable syntax highlighting
-set number
+set number relativenumber
 set cursorline
 highlight CursorLine cterm=NONE ctermfg=NONE ctermbg=darkgray guifg=NONE guibg=darkgray
 highlight CursorLineNR cterm=NONE ctermfg=yellow guifg=yellow
@@ -67,7 +101,8 @@ set shiftwidth=4 " Set shift width to 4 spaces.
 set tabstop=4 " Set tab width to 4 columns.
 set expandtab " Use space characters instead of tabs.
 set nobackup " Do not save backup files.
-set scrolloff=10 " Do not let cursor scroll below or above N number of lines when scrolling.
+set scrolloff=20 " Do not let cursor scroll below or above N number of lines when scrolling.
+set sidescrolloff=75 " Keep 30 cols left and right of the cursor visible at all times
 set nowrap " Do not wrap lines. Allow long lines to extend as far as the line goes.
 set incsearch " While searching though a file incrementally highlight matching characters as you type.
 set ignorecase " Ignore capital letters during search.
@@ -88,6 +123,11 @@ set wildignore=*.docx,*.jpg,*.png,*.gif,*.pdf,*.pyc,*.exe,*.flv,*.img,*.xlsx " W
 " Disable bell
 set visualbell
 set t_vb=   
+
+" Git difftool
+if &diff
+    highlight! link DiffText MatchParen
+endif
 
 " }}}
 
@@ -120,8 +160,15 @@ set t_vb=
     " CTRL+UP, CTRL+DOWN, CTRL+LEFT, or CTRL+RIGHT.
     nnoremap <C-UP>    :resize +2<CR>
     nnoremap <C-Down>  :resize -2<CR>
-    nnoremap <C-i>  :vertical resize -2<CR>
-    nnoremap <C-o> :vertical resize +2<CR>
+    " nnoremap <C-i>  :vertical resize -2<CR> Now used for swithing tabs
+    " nnoremap <C-o> :vertical resize +2<CR> Now used for switching tabs
+    
+    " For moving between tabs
+    nnoremap <C-i> :tabp<CR>
+    nnoremap <C-o> :tabn<CR>
+    nnoremap <C-n> :tabnew<CR>
+    nnoremap <A-d> :tabc<CR>
+
 
 " }}}
 
