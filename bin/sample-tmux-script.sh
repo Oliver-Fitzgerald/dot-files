@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Define the session name and directories
-SESSION_NAME="server-impl"
-CODE_DIR="$HOME/Documents/Projects/git-repos/server/c-server/src"
-CONTENT_DIR="$HOME/Documents/Projects/git-repos/server/c-server/src/html"
-DOCUMENTATION="$HOME/Documents/Projects/git-repos/server/documentation"
+SESSION_NAME="sample session name"
+CODE_DIR="$HOME/Documents/Code"
+CONTENT_DIR="$HOME/Documents/Resources"
+DOCUMENTATION="$HOME/Documents/Documentation"
 
 #Scripts
 HAS_TARGET_SESSION="/home/guts/bin/tmux/check-session-exists.sh"
@@ -22,11 +22,6 @@ else
     # Start a new tmux session
     tmux new-session -d -s $SESSION_NAME 
 
-    # compile
-    tmux send-keys -t $SESSION_NAME:1 "cd $CODE_DIR && clear && gcc http_server.c -o http_server" C-m
-    tmux send-keys -t $SESSION_NAME:1 "clear" C-m
-    tmux send-keys -t $SESSION_NAME:1 "gcc http_server.c -o http_server" C-m
-
     # edit
     tmux new-window -t $SESSION_NAME -n edit
     tmux send-keys -t $SESSION_NAME:2 "cd $CODE_DIR" C-m
@@ -35,11 +30,15 @@ else
     # content
     tmux new-window -t $SESSION_NAME -n content
     tmux send-keys -t $SESSION_NAME:3 "cd $CONTENT_DIR" C-m
-    tmux send-keys -t $SESSION_NAME:2 "clear" C-m
+    tmux send-keys -t $SESSION_NAME:3 "clear" C-m
 
     # documentation 
     tmux new-window -t $SESSION_NAME -n documentation
-    tmux send-keys -t $SESSION_NAME:4 "cd $DOCUMENTATION && clear && echo 'Welcome back to the server construction session!'" C-m
+    tmux send-keys -t $SESSION_NAME:4 "cd $DOCUMENTATION && clear && echo 'Welcome Back!'" C-m
+
+    # code
+    tmux send-keys -t $SESSION_NAME:1 "cd $CODE_DIR && clear && vim" C-m
+
 
     # Attach to the session
     tmux attach-session -t $SESSION_NAME
