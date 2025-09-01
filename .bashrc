@@ -56,17 +56,18 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
+HR=$(printf "\e[1;4m%*s\e[0m\n" "$(tput cols)")
 if [ "$color_prompt" = yes ]; then
     PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\n\$ '
 else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\n\$ '
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\n\$ '
 fi
 unset color_prompt force_color_prompt
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
 xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]\n$PS1"
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\n\$ '
     ;;
 *)
     ;;
@@ -116,18 +117,21 @@ if ! shopt -oq posix; then
   fi
 fi
 
-######################
+############################################
 #   My Additions
-######################
+############################################
+
 #home
-cd /home/guts/Documents
+cd ~
+clear
+neofetch
 
 #nvm
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-#python file check 
+#python file check  - Never Worked
 #check_py_command() {
     # Get the last executed command from history
  #   last_command=$(history 1 | sed 's/^ *[0-9]* *//')
@@ -146,27 +150,37 @@ export NVM_DIR="$HOME/.nvm"
 
 
 #My Aliases
-alias home='cd ~/Documents;clear;neofetch'
-alias proj='cd ~/Documents/Projects'
-alias vim='vim -u ~/.vimrc'
+alias home='cd ~;clear;neofetch'
+alias windows='cd /mnt/c/Users/'
+alias proj='cd ~/projects'
 alias tmuxa='tmux attach -t 0'
-alias python='python3'
 alias firefox='firefox --new-window'
 alias postman='postman >/dev/null 2>/dev/null &'
 #Git Alias
 alias gs="git status"
 alias ga="git add"
 alias gap="git add --patch"
-alias gc="git commit --template=/home/guts/.config/git/template"
+alias gc="git commit --template=/home/<user>/.config/git/template"
+alias gdiff="git difftool -y"
+alias gl="git log --graph --abbrev-commit --decorate --pretty=format:\"%C(yellow)%h%Creset %ad - %C(cyan)%an%Creset: %s\" --stat --date=short"
+#Tmux
+alias tname="tmux rename-window"
+#Python
+alias python='python3'
+alias psrc="source venv/bin/activate"
+#Docker
+alias dbr='source ~/.local/bin/docker-build-run.sh'
+alias ddl='source ~/.local/bin/docker-delete-last.sh'
+alias dda='source ~/.local/bin/docker-delete-all.sh'
 
 #Path
-export PATH=$PATH:/bin:/usr/bin:/bin/lesspipe:/usr/bin/lesspipe:/bin/dircolors:/usr/bin/dircolors
-export PATH="$HOME/bin:$PATH"
+export PATH=$PATH:/bin:/usr/bin:/bin/lesspipe:/usr/bin/lesspipe:/bin/dircolors:/usr/bin/dircolors:/home/efitoli/.local/bin
 
+# Move to rubbish instead of deleting
 rm() {
 
     # Check if Trash directory exists; create it if it doesn't
-    RUBISH_DIR="~/.rubbish"
+    RUBISH_DIR="/home/<user>/.rubbish"
     mkdir -p "$RUBISH_DIR"
 
     # Loop through all arguments passed to rm (files and directories)
@@ -183,8 +197,12 @@ rm() {
     done
 }
 
+# Docker exec alias
+dexec() {
+    docker exec -it $LAST_DOCKER_IMAGE bash
+}
 
-#Display git branch
+# Display git branch on PS1
 parse_git_branch() {
    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
