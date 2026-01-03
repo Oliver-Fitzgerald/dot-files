@@ -1,7 +1,9 @@
 return {
     "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate",
+    lazy = false,
+    build = ':TSUpdate',
     config = function()
-        require("plugins.config.treesitter")
+        require("nvim-treesitter").install({ 'cpp', 'java'})
+        require("nvim-treesitter").setup(require("plugins.config.treesitter"))
     end,
 }

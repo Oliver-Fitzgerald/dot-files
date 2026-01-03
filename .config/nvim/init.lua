@@ -18,13 +18,14 @@ vim.g.mapleader = "\\"
 
 -- Plugins ---------------------------------------------------------------- {{{
 
--- Janky fix to mannually enable syntax highligthing when file opened 
--- vim.api.nvim_create_autocmd({"BufEnter", "BufWinEnter"}, {
-  -- pattern = "*",
-  -- callback = function()
-    -- vim.cmd("TSBufEnable highlight")
-  -- end,
--- })
+-- Enable syntax highlighting for given file types with treesitter
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'cpp' },
+  callback = function()
+
+      vim.treesitter.start()
+  end,
+})
 
 vim.cmd([[
     :hi      NvimTreeRootFolder         gui=bold guifg=#414833
