@@ -1,0 +1,6 @@
+To install new font
+cp *.ttf ~/.local/share/fonts/
+fc-cache -f -v
+
+Confirm fonts presence with
+fc-list | grep "font name"

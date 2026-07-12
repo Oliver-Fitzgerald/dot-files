@@ -1,6 +1,8 @@
+#!/bin/bash
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
+
 
 # If not running interactively, don't do anything
 case $- in
@@ -56,7 +58,7 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
-HR=$(printf "\e[1;4m%*s\e[0m\n" "$(tput cols)")
+# HR=$(printf "\e[1;4m%*s\e[0m\n" "$(tput cols)") # Causing tab to flicker
 if [ "$color_prompt" = yes ]; then
     PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\n\$ '
 else
@@ -120,67 +122,42 @@ fi
 ############################################
 #   My Additions
 ############################################
+rm -r /home/guts/Downloads >/dev/null 2>/dev/null # Temporary fix
+rm -r /home/guts/Documents >/dev/null 2>/dev/null # Temporary fix
 
-#home
-cd ~
-clear
-neofetch
+# My Aliases
 
-#nvm
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-#python file check  - Never Worked
-#check_py_command() {
-    # Get the last executed command from history
- #   last_command=$(history 1 | sed 's/^ *[0-9]* *//')
-
-    # Check if the command ends with ".py"
-  #  if [[ "${last_command}" == *.py ]]; then
-   #     # Run your bash script here
-        #~/python_check_.sh
-    #    echo "Lint .py file"
-        #echo $(flake8 $(history 1 | sed 's/^[^ ]* //'))
-   # fi
-#}
-
-# Add the check function to the PROMPT_COMMAND
-#PROMPT_COMMAND="check_py_command;$PROMPT_COMMAND"
-
-
-#My Aliases
-alias home='cd ~;clear;neofetch'
-alias windows='cd /mnt/c/Users/'
-alias proj='cd ~/projects'
-alias tmuxa='tmux attach -t 0'
-alias firefox='firefox --new-window'
-alias postman='postman >/dev/null 2>/dev/null &'
-#Git Alias
+# Application
+alias obsidian="./obsidian >/dev/null 2>/dev/null &"
+# Git Alias
 alias gs="git status"
 alias ga="git add"
 alias gap="git add --patch"
-alias gc="git commit --template=/home/<user>/.config/git/template"
+alias gc="git commit --template=/home/guts/.config/git/template"
 alias gdiff="git difftool -y"
 alias gl="git log --graph --abbrev-commit --decorate --pretty=format:\"%C(yellow)%h%Creset %ad - %C(cyan)%an%Creset: %s\" --stat --date=short"
-#Tmux
+# Tmux
 alias tname="tmux rename-window"
-#Python
+alias tmuxa='tmux attach -t 0'
+# Python
 alias python='python3'
-alias psrc="source venv/bin/activate"
-#Docker
+# Docker
 alias dbr='source ~/.local/bin/docker-build-run.sh'
 alias ddl='source ~/.local/bin/docker-delete-last.sh'
 alias dda='source ~/.local/bin/docker-delete-all.sh'
+# Navigation
+alias navigate='/home/guts/projects/personal/navigate/build/navigate && source /home/guts/projects/personal/navigate/src/navigate_cmd.sh'
 
 #Path
-export PATH=$PATH:/bin:/usr/bin:/bin/lesspipe:/usr/bin/lesspipe:/bin/dircolors:/usr/bin/dircolors:/home/efitoli/.local/bin
+export PATH=$PATH:/bin:/usr/bin:/bin/lesspipe:/usr/bin/lesspipe:/bin/dircolors:/usr/bin/dircolors:/home/efitoli/.local/bin:/home/guts/applications/obsidian/obsidian
+
+# Function for sourcing the python virtual enviorment
 
 # Move to rubbish instead of deleting
 rm() {
 
     # Check if Trash directory exists; create it if it doesn't
-    RUBISH_DIR="/home/<user>/.rubbish"
+    RUBISH_DIR="/home/guts/.rubbish"
     mkdir -p "$RUBISH_DIR"
 
     # Loop through all arguments passed to rm (files and directories)
@@ -204,9 +181,43 @@ dexec() {
 
 # Display git branch on PS1
 parse_git_branch() {
-   git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+
+    # if we're in a git repository (bare or non-bare)
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+
+        # Ordinary Repo / Worktree
+        if [[ $(git rev-parse --is-inside-git-dir 2>/dev/null) == "true" ]]; then
+            echo "(bare repository)";
+
+        elif [[ $(basename $(git rev-parse --git-dir 2>/dev/null)) != ".git" ]]; then
+            local repo=$(basename $(git rev-parse --git-common-dir));
+            local branch=$(git branch --show-current);
+
+            echo "("$repo"/"$branch")";
+
+        else
+            local repo=$(basename $(git rev-parse --show-toplevel));
+            local branch=$(git branch --show-current);
+
+            echo "("$repo"/"$branch")";
+
+        fi
+    fi
 }
-PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\[\033[33m\]$(parse_git_branch)\[\033[00m\]\n\$ '
+
+
+psrc() {
+
+    if [ -d ".venv" ]; then
+        source .venv/bin/activate
+    elif [ -d "venv" ]; then
+        source venv/bin/activate
+    else
+        echo "No virtual enviorment in current directory"
+    fi
+}
+
+PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]: \[\033[01;34m\]\W\[\033[00m\]\[\033[33m\] $(parse_git_branch)\[\033[00m\]\n\$ '
 
 # fnm
 FNM_PATH="/home/guts/.local/share/fnm"
@@ -215,3 +226,8 @@ if [ -d "$FNM_PATH" ]; then
   eval "`fnm env`"
 fi
 export PATH="$HOME/.local/bin:$PATH"
+
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

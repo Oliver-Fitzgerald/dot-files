@@ -21,9 +21,9 @@ vim.g.mapleader = "\\"
 -- Enable syntax highlighting for given file types with treesitter
 vim.api.nvim_create_autocmd('FileType', {
   pattern = { 'cpp' },
-  callback = function()
+  callback = function() 
 
-      vim.treesitter.start()
+      vim.treesitter.start() 
   end,
 })
 
@@ -57,9 +57,15 @@ vim.opt.relativenumber = true
 -- Cursor line
 vim.opt.cursorline = true
 vim.cmd([[
-  highlight CursorLine cterm=NONE ctermfg=NONE ctermbg=blue guifg=NONE guibg=#2b2f36
+    highlight CursorLine cterm=NONE ctermfg=NONE ctermbg=blue guifg=NONE guibg=NONE
   highlight CursorLineNR cterm=NONE ctermfg=yellow guifg=yellow
 ]])
+
+
+-- Background Opacity
+-- init.lua
+vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
 
 -- Indentation
 vim.opt.shiftwidth = 4
